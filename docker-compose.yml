@@ -3,11 +3,11 @@ services:
   backup2onedrive:
     hostname: anyshpm-ubuntu
     volumes:
-      - /home/anyshpm:/home/anyshpm
-      - /home/anyshpm/.config/rclone:/root/.config/rclone
+      - /path/to/data:/data
+      - /path/to/config/rclone:/root/.config/rclone
     environment:
-      - BACKUP_DRIVE_NAME=anyshpm-onedrive
-      - BACKUP_DIR=/home/anyshpm
-      - BACKUP_USERNAME=anyshpm
+      - BACKUP_DRIVE_NAME=cloud
+      - BACKUP_DIR=/data
+      - BACKUP_USERNAME=user
       - TZ=Asia/Shanghai
     image: anyshpm/backup
