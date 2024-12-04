@@ -1,0 +1,12 @@
+name: backup
+services:
+  backup2cloud:
+    hostname: host
+    volumes:
+      - /path/to/data:/data
+      - /path/to/config/rclone:/root/.config/rclone
+    environment:
+      - BACKUP_DRIVE_NAME=cloud
+      - BACKUP_DIR=/data
+      - TZ=Asia/Shanghai
+    image: anyshpm/backup
