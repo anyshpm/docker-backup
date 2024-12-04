@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -x
-
 # 设置默认值
 BACKUP_DRIVE_NAME=${BACKUP_DRIVE_NAME:-cloud}
 BACKUP_DIR=${BACKUP_DIR:-/data}
