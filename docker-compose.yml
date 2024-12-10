@@ -9,5 +9,7 @@ services:
       - BACKUP_DRIVE_NAME=cloud
       - BACKUP_DIR=/data
       - BACKUP_USERNAME=user
+      - BACKUP_DRIVE_PATH=
+      - OLD_DAYS_TO_DELETE=
       - TZ=Asia/Shanghai
     image: anyshpm/backup
