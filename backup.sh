@@ -17,7 +17,7 @@ fi
 cd "$BACKUP_DIR"
 
 # 创建备份目录（如果不存在）
-mkdir -pv "$BACKUP_DIR/.backup"
+#mkdir -pv "$BACKUP_DIR/.backup"
 
 # 备份当前用户的 crontab 到指定目录
 #crontab -l > "$BACKUP_DIR/.backup/crontab" || { echo "Failed to backup crontab" >&2; exit 1; }
