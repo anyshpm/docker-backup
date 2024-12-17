@@ -32,7 +32,7 @@ HOSTNAME=$(hostname -- | tr -dc '[:alnum:]-_')
 DATE=$(date +%Y%m%d%H%M)
 
 # 使用 tar 压缩用户目录并通过管道传递给 rclone
-tar --exclude-from="$BACKUP_DIR/.kopiaignore" -czf - "$BACKUP_DIR" | rclone rcat "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/backup-$DATE.tar.gz" || { echo "Failed to create tar archive" >&2; exit 1; }
+BZIP=--best tar --exclude-from="$BACKUP_DIR/.kopiaignore" -cjf - "$BACKUP_DIR" | rclone rcat "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/backup-$DATE.tar.bzip2" || { echo "Failed to create tar archive" >&2; exit 1; }
 echo "Tar archive created and uploaded successfully"
 
 # 删除远程存储中创建时间超期的文件
