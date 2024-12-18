@@ -7,7 +7,7 @@ on:
     tags: [ '*' ]
   pull_request:
     #branches: [ "main" ]
-    branches: [ "*" ]
+    branches: [ "develop", "main", "release-*" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -60,7 +60,8 @@ jobs:
           tags: |
             type=edge,branch=main,priority=900
             type=ref,event=tag,priority=800
-            type=ref,event=branch,suffix=-beta,priority=700            
+            type=raw,value=alpha,branch=develop,priority=700            
+            type=ref,event=release-*,suffix=-beta,priority=600            
 
       - name: Build and push Docker image
         id: build-and-push
