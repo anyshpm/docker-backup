@@ -2,7 +2,7 @@
 FROM alpine:latest
 
 # 安装必要的工具
-RUN apk add --no-cache tzdata tar rclone
+RUN apk add --no-cache tzdata tar rclone opengpg
 
 # 创建备份脚本
 RUN mkdir -p /scripts
