@@ -11,5 +11,6 @@ services:
       - BACKUP_USERNAME=user
       - BACKUP_DRIVE_PATH=
       - OLD_DAYS_TO_DELETE=
+      - BACKUP_ENCRYPTION_KEY=
       - TZ=Asia/Shanghai
     image: anyshpm/backup
