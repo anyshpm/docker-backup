@@ -1,13 +1,13 @@
-# 使用基础镜像
-FROM alpine:latest
+FROM alpine:3.18
 
-# 安装必要的工具
-RUN apk add --no-cache tzdata tar rclone gpg
+# Update software package repository and install necessary tools
+RUN apk add --no-cache tzdata tar rclone gpg xz 
 
-# 创建备份脚本
-RUN mkdir -p /scripts
-COPY backup.sh generate-ignore.sh /scripts/
-RUN chmod +x /scripts/*.sh
+# Copy the backup script and ignore generator into the container
+COPY backup.sh generate-ignore.sh /
 
-# 设置容器启动命令
-CMD ["/scripts/backup.sh"]
+# Make the scripts executable
+RUN chmod +x /backup.sh /generate-ignore.sh
+
+# Set the default command to run the backup script when the container starts
+CMD ["/backup.sh"]
