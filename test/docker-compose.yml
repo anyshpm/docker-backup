@@ -1,0 +1,18 @@
+name: backup
+services:
+  test:
+    hostname: anyshpm-ubuntu
+    volumes:
+      - ./backup-data/:/data/
+      - ./backup-path/:/backup/
+      - ./rclone.conf:/root/.config/rclone/rclone.conf
+    environment:
+      - BACKUP_DRIVE_NAME=local
+      - BACKUP_DIR=/data
+      - BACKUP_USERNAME=user
+      - BACKUP_DRIVE_PATH=/backup
+      - BACKUP_ENCRYPTION_KEY=password 
+      - OLD_DAYS_TO_DELETE=7
+      - TZ=Asia/Shanghai
+    #image: anyshpm/backup:test
+    image: anyshpm/backup:beta
