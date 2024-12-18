@@ -3,7 +3,7 @@ name: CI
 # Trigger workflow on push and pull request events
 on:
   push:
-    branches: [ "*" ]        # Trigger on all branch pushes
+    branches: [ "develop", "main", "release-*" ]        # Trigger on all branch pushes
     tags: [ 'v*' ]          # Trigger on version tags
   pull_request:
     branches: [ "develop", "main", "release-*" ]  # Trigger on PRs to these branches
