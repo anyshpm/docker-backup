@@ -61,7 +61,7 @@ jobs:
             type=edge,branch=main,priority=900
             type=ref,event=tag,priority=800
             type=raw,value=alpha,branch=develop,priority=700            
-            type=ref,event=release-*,suffix=-beta,priority=600            
+            type=ref,branch=release-*,suffix=-beta,priority=600            
 
       - name: Build and push Docker image
         id: build-and-push
