@@ -26,11 +26,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Get the release branch version number
-      - name: Get release branch version
-        uses: anyshpm/get-release-branch-version@master
-        id: branchVersion
-
       # Install cosign for image signing (skip for pull requests)
       - name: Install cosign
         if: github.event_name != 'pull_request'
@@ -60,14 +55,15 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         env:
-          VERSION: ${{ steps.branchVersion.outputs.major }}.${{ steps.branchVersion.outputs.minor }}.${{ steps.branchVersion.outputs.patch }}
+          BRANCH_NAME: ${{ github.ref_name }}
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
             type=raw,value=alpha,enable=${{ github.ref == 'refs/heads/develop' }}
-            type=raw,value=${{ env.VERSION }}-snapshot,enable=${{ startsWith(github.ref, 'refs/heads/release-') }}
+            type=raw,value=${{ github.ref_name }}-beta,enable=${{ startsWith(github.ref, 'refs/heads/release-') }}
             type=sha,prefix={{branch}}-,enable=${{ github.ref != 'refs/heads/main' }}
 
       # Build and push Docker image
