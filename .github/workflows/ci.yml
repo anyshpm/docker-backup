@@ -26,6 +26,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Get the release branch version number
+      - name: Get release branch version
+        uses: valadas/get-release-branch-version@v1
+        id: branchVersion
+
       # Install cosign for image signing (skip for pull requests)
       - name: Install cosign
         if: github.event_name != 'pull_request'
@@ -49,10 +54,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # Get the release branch version number
-      - uses: valadas/get-release-branch-version@v1
-        id: branchVersion
 
       # Extract metadata for Docker image tagging
       - name: Extract Docker metadata
