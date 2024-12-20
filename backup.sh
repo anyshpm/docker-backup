@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Set strict mode
-set -euo pipefail
+set -xeuo pipefail
 
 # Set default values
 BACKUP_DRIVE_NAME=${BACKUP_DRIVE_NAME:-cloud}
