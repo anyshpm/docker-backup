@@ -14,4 +14,4 @@ services:
       - BACKUP_ENCRYPTION_KEY=password 
       - OLD_DAYS_TO_DELETE=7
       - TZ=Asia/Shanghai
-    image: anyshpm/backup:release-0.1-beta
+    image: anyshpm/backup
