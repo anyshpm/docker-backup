@@ -50,12 +50,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Get the release branch version number
+      - uses: valadas/get-release-branch-version@v1
+        id: branchVersion
+
       # Extract metadata for Docker image tagging
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         env:
-          BRANCH_NAME: ${{ github.ref_name }}
+          VERSION: ${{ steps.branchVersion.outputs.major }}.${{ steps.branchVersion.outputs.minor }}.${{ steps.branchVersion.outputs.patch }}
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -63,7 +67,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=alpha,enable=${{ github.ref == 'refs/heads/develop' }}
-            type=raw,value=${{ github.ref_name }}-beta,enable=${{ startsWith(github.ref, 'refs/heads/release-') }}
+            type=raw,value=${{ env.VERSION }}-beta,enable=${{ startsWith(github.ref, 'refs/heads/release-') }}
             type=sha,prefix={{branch}}-,enable=${{ github.ref != 'refs/heads/main' }}
 
       # Build and push Docker image
