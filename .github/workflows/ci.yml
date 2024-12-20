@@ -28,7 +28,7 @@ jobs:
 
       # Get the release branch version number
       - name: Get release branch version
-        uses: valadas/get-release-branch-version@v1
+        uses: anyshpm/get-release-branch-version
         id: branchVersion
 
       # Install cosign for image signing (skip for pull requests)
@@ -66,9 +66,8 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
             type=raw,value=alpha,enable=${{ github.ref == 'refs/heads/develop' }}
-            type=raw,value=${{ env.VERSION }}-beta,enable=${{ startsWith(github.ref, 'refs/heads/release-') }}
+            type=raw,value=${{ env.VERSION }}-snapshot,enable=${{ startsWith(github.ref, 'refs/heads/release-') }}
             type=sha,prefix={{branch}}-,enable=${{ github.ref != 'refs/heads/main' }}
 
       # Build and push Docker image
