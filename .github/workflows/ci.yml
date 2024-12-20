@@ -28,7 +28,7 @@ jobs:
 
       # Get the release branch version number
       - name: Get release branch version
-        uses: anyshpm/get-release-branch-version
+        uses: anyshpm/get-release-branch-version@master
         id: branchVersion
 
       # Install cosign for image signing (skip for pull requests)
