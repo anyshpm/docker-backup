@@ -52,7 +52,7 @@ log "Ignore patterns generated successfully"
 HOSTNAME=$(hostname | tr -dc 'a-zA-Z0-9-_')
 DATE=$(date +%Y%m%d%H%M)
 BACKUP_FILE="backup-$DATE.tar.bz2"
-[ -n "${BACKUP_ENCRYPTION_KEY:-}" ] && BACKUP_FILE="$BACKUP_FILE.gpg"
+[ -n "$BACKUP_ENCRYPTION_KEY" -o -n "$BACKUP_ENCRYPTION_PUBKEY_FILE" ] && BACKUP_FILE="$BACKUP_FILE.gpg"
 
 # Clean up old backups if OLD_DAYS_TO_DELETE is set
 if [ -n "${OLD_DAYS_TO_DELETE:-}" ]; then
