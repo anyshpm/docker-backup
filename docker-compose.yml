@@ -5,11 +5,13 @@ services:
     volumes:
       - /path/to/data:/data
       - /path/to/config/rclone:/root/.config/rclone
+      - /path/to/backup.pub:/backup.pub
     environment:
       - BACKUP_DRIVE_NAME=cloud
       - BACKUP_DIR=/data
       - BACKUP_USERNAME=user
       - BACKUP_DRIVE_PATH=
+      - BACKUP_ENCRYPTION_PUBKEY_FILE=/backup.pub
       - OLD_DAYS_TO_DELETE=
       - BACKUP_ENCRYPTION_KEY=
       - TZ=Asia/Shanghai
