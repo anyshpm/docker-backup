@@ -54,12 +54,6 @@ DATE=$(date +%Y%m%d%H%M)
 BACKUP_FILE="backup-$DATE.tar.bz2"
 [ -n "$BACKUP_ENCRYPTION_KEY" -o -n "$BACKUP_ENCRYPTION_PUBKEY_FILE" ] && BACKUP_FILE="$BACKUP_FILE.gpg"
 
-# Clean up old backups if OLD_DAYS_TO_DELETE is set
-if [ -n "${OLD_DAYS_TO_DELETE:-}" ]; then
-    log "Cleaning up backups older than $OLD_DAYS_TO_DELETE days..."
-    rclone delete --min-age "${OLD_DAYS_TO_DELETE}d" "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH" || log "Warning: Failed to clean up old backups"
-fi
-
 # Record start time
 START_TIME=$(date '+%Y-%m-%d %H:%M:%S')
 log "Starting backup process at $START_TIME"
@@ -91,6 +85,12 @@ fi
 # Verify backup exists and get its size
 if ! BACKUP_SIZE=$(rclone size "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" 2>/dev/null); then
     error_exit "Backup file not found after upload - possible transfer error"
+fi
+
+# Clean up old backups if OLD_DAYS_TO_DELETE is set
+if [ -n "$OLD_DAYS_TO_DELETE" ]; then
+    log "Cleaning up backups older than $OLD_DAYS_TO_DELETE days..."
+    rclone delete --min-age "${OLD_DAYS_TO_DELETE}d" "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH" || log "Warning: Failed to clean up old backups"
 fi
 
 # Record end time
