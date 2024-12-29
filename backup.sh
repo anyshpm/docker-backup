@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Set strict mode
-set -xeuo pipefail
+set -euo pipefail
 
 # Set default values
 BACKUP_DRIVE_NAME=${BACKUP_DRIVE_NAME:-cloud}
@@ -35,8 +35,6 @@ cleanup() {
 
 # Set trap for cleanup
 trap cleanup EXIT
-
-ls /scripts
 
 # Check if backup directory exists
 if [ ! -d "$BACKUP_DIR" ]; then
