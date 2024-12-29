@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # 使用 find 查找所有 .backupignore 文件
 find . -maxdepth 4 -name "*.backupignore" | while IFS= read -r file; do

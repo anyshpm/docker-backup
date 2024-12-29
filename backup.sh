@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Set strict mode
-set -euo pipefail
+set -xeuo pipefail
 
 # Set default values
 BACKUP_DRIVE_NAME=${BACKUP_DRIVE_NAME:-cloud}
@@ -36,6 +36,8 @@ cleanup() {
 # Set trap for cleanup
 trap cleanup EXIT
 
+ls /scripts
+
 # Check if backup directory exists
 if [ ! -d "$BACKUP_DIR" ]; then
     error_exit "Backup directory '$BACKUP_DIR' does not exist"
@@ -63,24 +65,26 @@ log "Backup target: $BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE"
 if [ -f "$BACKUP_ENCRYPTION_PUBKEY_FILE" ]; then
     log "Creating encrypted backup with public key..."
     tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored -c "$BACKUP_DIR" | \
-    bzip2 "-$COMPRESSION_LEVEL" | \
-    gpg --quiet --encrypt --batch --recipient-file "$BACKUP_ENCRYPTION_PUBKEY_FILE" | \
-    rclone rcat --progress --size-only "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" || \
-    error_exit "Failed to create encrypted backup"
+        bzip2 "-$COMPRESSION_LEVEL" | \
+        gpg --quiet --encrypt --batch --recipient-file "$BACKUP_ENCRYPTION_PUBKEY_FILE" --output /tmp/"$BACKUP_FILE" || \
+        error_exit "Failed to create encrypted backup"
 elif [ -n "${BACKUP_ENCRYPTION_KEY:-}" ]; then
     log "Creating encrypted backup..."
     tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored -c "$BACKUP_DIR" | \
-    bzip2 "-$COMPRESSION_LEVEL" | \
-    gpg --quiet --symmetric --batch --passphrase "$BACKUP_ENCRYPTION_KEY" | \
-    rclone rcat --progress --size-only "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" || \
-    error_exit "Failed to create encrypted backup"
+        bzip2 "-$COMPRESSION_LEVEL" | \
+        gpg --quiet --symmetric --batch --passphrase "$BACKUP_ENCRYPTION_KEY" --output /tmp/"$BACKUP_FILE" || \
+        error_exit "Failed to create encrypted backup"  
 else
     log "Creating unencrypted backup..."
     tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored -c "$BACKUP_DIR" | \
-    bzip2 "-$COMPRESSION_LEVEL" | \
-    rclone rcat --progress --size-only "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" || \
-    error_exit "Failed to create backup"
+        bzip2 "-$COMPRESSION_LEVEL" > /tmp/"$BACKUP_FILE" || \
+        error_exit "Failed to create backup"
 fi
+rclone copyto --progress --size-only /tmp/"$BACKUP_FILE" "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" || \
+    error_exit "Failed to create backup"
+
+# Clean up temporary files
+rm -f /tmp/"$BACKUP_FILE"
 
 # Verify backup exists and get its size
 if ! BACKUP_SIZE=$(rclone size "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" 2>/dev/null); then
