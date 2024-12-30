@@ -62,19 +62,19 @@ log "Backup target: $BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE"
 # Create and upload backup with progress indication
 if [ -f "$BACKUP_ENCRYPTION_PUBKEY_FILE" ]; then
     log "Creating encrypted backup with public key..."
-    tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored -c "$BACKUP_DIR" | \
+    tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored --warning=no-file-changed -c "$BACKUP_DIR" | \
         bzip2 "-$COMPRESSION_LEVEL" | \
         gpg --quiet --encrypt --batch --recipient-file "$BACKUP_ENCRYPTION_PUBKEY_FILE" --output /tmp/"$BACKUP_FILE" || \
         error_exit "Failed to create encrypted backup"
 elif [ -n "${BACKUP_ENCRYPTION_KEY:-}" ]; then
     log "Creating encrypted backup..."
-    tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored -c "$BACKUP_DIR" | \
+    tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored --warning=no-file-changed -c "$BACKUP_DIR" | \
         bzip2 "-$COMPRESSION_LEVEL" | \
         gpg --quiet --symmetric --batch --passphrase "$BACKUP_ENCRYPTION_KEY" --output /tmp/"$BACKUP_FILE" || \
         error_exit "Failed to create encrypted backup"  
 else
     log "Creating unencrypted backup..."
-    tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored -c "$BACKUP_DIR" | \
+    tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored --warning=no-file-changed -c "$BACKUP_DIR" | \
         bzip2 "-$COMPRESSION_LEVEL" > /tmp/"$BACKUP_FILE" || \
         error_exit "Failed to create backup"
 fi
