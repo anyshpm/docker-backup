@@ -60,6 +60,8 @@ log "Starting backup process at $START_TIME"
 log "Backup target: $BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE"
 
 # Create and upload backup with progress indication
+# Disable pipefail to avoid errors when tar fails to create the backup
+set +o pipefail
 if [ -f "$BACKUP_ENCRYPTION_PUBKEY_FILE" ]; then
     log "Creating encrypted backup with public key..."
     tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored --warning=no-file-changed -c "$BACKUP_DIR" | \
@@ -78,6 +80,8 @@ else
         bzip2 "-$COMPRESSION_LEVEL" > /tmp/"$BACKUP_FILE" || \
         error_exit "Failed to create backup"
 fi
+# Set pipefail back to normal
+set -o pipefail
 rclone copyto --progress --size-only /tmp/"$BACKUP_FILE" "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" || \
     error_exit "Failed to create backup"
 
