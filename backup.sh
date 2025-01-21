@@ -82,7 +82,7 @@ else
 fi
 # Set pipefail back to normal
 set -o pipefail
-rclone copyto --progress --size-only --timeout 1h --no-check-dest /tmp/"$BACKUP_FILE" "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" || \
+rclone copyto --verbose --retries 2 --size-only --timeout 1h --no-check-dest /tmp/"$BACKUP_FILE" "$BACKUP_DRIVE_NAME:$BACKUP_DRIVE_PATH/$BACKUP_FILE" || \
     error_exit "Failed to create backup"
 
 # Clean up temporary files

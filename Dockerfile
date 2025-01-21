@@ -5,8 +5,9 @@ FROM alpine:3.19
 WORKDIR /scripts
 
 # Install required tools
+# Install gpg-agent to prevent warnings from appearing when using gpg commands.
 RUN apk add --no-cache \
-    tzdata==2024a-r0 \
+    tzdata==2024b-r0 \
     tar==1.35-r2 \
     rclone==1.65.0-r3 \
     gpg==2.4.4-r0 \
