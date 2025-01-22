@@ -12,6 +12,7 @@ RUN apk add --no-cache \
     rclone==1.65.0-r3 \
     gpg==2.4.4-r0 \
     gpg-agent==2.4.4-r0 \
+    zstd==1.5.5-r8 \
     && rm -rf /var/cache/apk/*
 
 # Copy scripts and set permissions
