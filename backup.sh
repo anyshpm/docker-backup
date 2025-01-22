@@ -13,6 +13,10 @@ BACKUP_ENCRYPTION_KEY=${BACKUP_ENCRYPTION_KEY:-}
 OLD_DAYS_TO_DELETE=${OLD_DAYS_TO_DELETE:-}
 COMPRESSION_LEVEL=${COMPRESSION_LEVEL:-9}
 
+# Calculate number of threads (half of CPU cores)
+THREADS=$(( $(nproc) / 2 ))
+[ "$THREADS" -lt 1 ] && THREADS=1
+
 # Logging function
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -51,7 +55,7 @@ log "Ignore patterns generated successfully"
 # Get hostname and date, ensure path safety
 HOSTNAME=$(hostname | tr -dc 'a-zA-Z0-9-_')
 DATE=$(date +%Y%m%d%H%M)
-BACKUP_FILE="backup-$DATE.tar.bz2"
+BACKUP_FILE="backup-$DATE.tar.zst"
 [ -n "$BACKUP_ENCRYPTION_KEY" -o -n "$BACKUP_ENCRYPTION_PUBKEY_FILE" ] && BACKUP_FILE="$BACKUP_FILE.gpg"
 
 # Record start time
@@ -65,19 +69,19 @@ set +o pipefail
 if [ -f "$BACKUP_ENCRYPTION_PUBKEY_FILE" ]; then
     log "Creating encrypted backup with public key..."
     tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored --warning=no-file-changed -c "$BACKUP_DIR" | \
-        bzip2 "-$COMPRESSION_LEVEL" | \
+        zstd --fast -T"$THREADS" | \
         gpg --quiet --encrypt --batch --recipient-file "$BACKUP_ENCRYPTION_PUBKEY_FILE" --output /tmp/"$BACKUP_FILE" || \
         error_exit "Failed to create encrypted backup"
 elif [ -n "${BACKUP_ENCRYPTION_KEY:-}" ]; then
     log "Creating encrypted backup..."
     tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored --warning=no-file-changed -c "$BACKUP_DIR" | \
-        bzip2 "-$COMPRESSION_LEVEL" | \
+        zstd --fast -T"$THREADS" | \
         gpg --quiet --symmetric --batch --passphrase "$BACKUP_ENCRYPTION_KEY" --output /tmp/"$BACKUP_FILE" || \
         error_exit "Failed to create encrypted backup"  
 else
     log "Creating unencrypted backup..."
     tar --exclude-from="$BACKUP_DIR/.kopiaignore" --warning=no-file-ignored --warning=no-file-changed -c "$BACKUP_DIR" | \
-        bzip2 "-$COMPRESSION_LEVEL" > /tmp/"$BACKUP_FILE" || \
+        zstd --fast -T"$THREADS" > /tmp/"$BACKUP_FILE" || \
         error_exit "Failed to create backup"
 fi
 # Set pipefail back to normal
